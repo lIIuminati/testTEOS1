@@ -6,6 +6,7 @@ set(MX_Defines_Syms
 	USE_HAL_DRIVER 
 	STM32L433xx
     $<$<CONFIG:Debug>:DEBUG>
+    NOTE_C_LOW_MEM
 )
 
 # STM32CubeMX generated include paths
@@ -15,6 +16,7 @@ set(MX_Include_Dirs
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/CMSIS/Device/ST/STM32L4xx/Include
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/CMSIS/Include
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/note-c
 )
 
 # STM32CubeMX generated application sources
@@ -23,12 +25,32 @@ set(MX_Application_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/gpio.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/adc.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/i2c.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/noteI2c.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/usart.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/stm32l4xx_it.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/stm32l4xx_hal_msp.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/sysmem.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/syscalls.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../startup_stm32l433xx.s
+)
+
+# Note-c library sources
+set(NOTE_C_Src
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/note-c/n_atof.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/note-c/n_b64.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/note-c/n_cjson.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/note-c/n_cjson_helpers.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/note-c/n_cobs.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/note-c/n_const.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/note-c/n_ftoa.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/note-c/n_helpers.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/note-c/n_hooks.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/note-c/n_i2c.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/note-c/n_md5.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/note-c/n_printf.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/note-c/n_request.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/note-c/n_serial.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/note-c/n_str.c
 )
 
 # STM32 HAL/LL Drivers
@@ -81,7 +103,7 @@ target_link_libraries(STM32_Drivers PUBLIC stm32cubemx)
 
 
 # Add STM32CubeMX generated application sources to the project
-target_sources(${CMAKE_PROJECT_NAME} PRIVATE ${MX_Application_Src})
+target_sources(${CMAKE_PROJECT_NAME} PRIVATE ${MX_Application_Src} ${NOTE_C_Src})
 
 # Link directories setup
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${MX_LINK_DIRS})

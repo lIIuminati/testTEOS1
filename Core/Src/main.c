@@ -22,35 +22,46 @@
 #include "i2c.h"
 #include "usart.h"
 #include "gpio.h"
+#include "noteI2c.h"
+#include "note.h"
 
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
+#include <stdlib.h>
 
-/* USER CODE END Includes */
+    /* Private includes
+       ----------------------------------------------------------*/
+    /* USER CODE BEGIN Includes */
 
-/* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN PTD */
+    /* USER CODE END Includes */
 
-/* USER CODE END PTD */
+    /* Private typedef
+       -----------------------------------------------------------*/
+    /* USER CODE BEGIN PTD */
 
-/* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
+    /* USER CODE END PTD */
 
-/* USER CODE END PD */
+    /* Private define
+       ------------------------------------------------------------*/
+    /* USER CODE BEGIN PD */
 
-/* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
+    /* USER CODE END PD */
 
-/* USER CODE END PM */
+    /* Private macro
+       -------------------------------------------------------------*/
+    /* USER CODE BEGIN PM */
 
-/* Private variables ---------------------------------------------------------*/
+    /* USER CODE END PM */
 
-/* USER CODE BEGIN PV */
+    /* Private variables
+       ---------------------------------------------------------*/
 
-/* USER CODE END PV */
+    /* USER CODE BEGIN PV */
 
-/* Private function prototypes -----------------------------------------------*/
-void SystemClock_Config(void);
+    /* USER CODE END PV */
+
+    /* Private function prototypes
+       -----------------------------------------------*/
+    void
+    SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -94,11 +105,17 @@ int main(void)
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
 
+  // Initialize note-c library
+  NoteSetFn(malloc, free, HAL_Delay, HAL_GetTick);
+  NoteSetFnI2C(NOTE_I2C_ADDR_DEFAULT, NOTE_I2C_MAX_DEFAULT, noteI2CReset, noteI2CTransmit, noteI2CReceive);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
       while (1) {
+
+    uint8_t data;
 
     HAL_Delay(1000);
     // 1. Turn LED ON: Starting work
