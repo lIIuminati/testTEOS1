@@ -1,0 +1,6 @@
+[submodule "lib/note-c"]
+	path = lib/note-c
+	url = https://github.com/blues/note-c.git
+[submodule "lib/note-stm32l4"]
+	path = lib/note-stm32l4
+	url = https://github.com/blues/note-stm32l4.git
