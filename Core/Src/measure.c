@@ -35,17 +35,67 @@ void initMeasure(void) {
     srand(HAL_GetTick());
 }
 
-// Get a random measurement value (0-255) and output to UART2
-uint8_t getMeasure(void) {
-    // Generate random number between 0 and 255
-    uint8_t measurement = (uint8_t)(rand() % 256);
-    
-    // Format and send the measurement via UART2
-    char buffer[64];
-    sprintf(buffer, "Measure: %u\r\n", measurement);
-    HAL_UART_Transmit(&huart2, (uint8_t*)buffer, strlen(buffer), HAL_MAX_DELAY);
-    
-    return measurement;
+uint8_t response[100]; // Serial port data reception
+uint8_t dataRequest[5] = {
+  0x18,0x05, 0x00, 0x01 ,0x0D
+};
+uint8_t adRequest[5] = {
+  0x18,0x05, 0x00, 0x02 ,0x0D
+};
+
+long requestProbe(int sensor, int what) {
+	// if what == 0 => request data
+	// if what == 1 => request AD
+	uint8_t *request;
+	uint8_t respLength;
+	UART_HandleTypeDef *uart;
+
+	if (sensor == SENSOR_180) {
+		uart = &huart1;
+	} else {
+		uart = &huart2;
+	}
+
+	if (what == 0) {
+		request = dataRequest;
+		respLength = 5;
+	} else {
+		request = adRequest;
+		respLength = 6;
+	}
+
+	HAL_StatusTypeDef statusTransmit, statusRecept;
+	// first send the request for getting the last measure
+	statusTransmit = HAL_UART_Transmit(uart, (uint8_t*)request, 5, 1000);
+	if (statusTransmit != HAL_OK) {
+		Error_Handler();
+	}
+	// clear the response buffer
+	memset(response, 0, sizeof(response));
+	// now wait for the response
+	statusRecept = HAL_UART_Receive(uart, (uint8_t*)response, respLength, 1000);
+//	if (statusRecept != HAL_OK) {
+//		Error_Handler();
+//	}
+	long r = response[2];
+	r = r *256;
+	r += response[3];
+	if (respLength>5) {
+		r = r *256;
+		r += response[4];
+	}
+	return r;
+}
+
+
+
+long getMeasure(int sensor) {
+
+	long probe = requestProbe(sensor, 0);
+	  // HAL_Delay(300);
+	long probe_ad = requestProbe(sensor, 1);
+
+    return probe_ad;
 }
 
 /* USER CODE END 1 */

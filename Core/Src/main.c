@@ -68,6 +68,12 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+//HardwareSerial stlinkSerial(PIN_VCP_RX, PIN_VCP_TX);
+
+//void setup() {
+  //stlinkSerial.begin(115200);
+  //stlinkSerial.println("ST-LINK VCP test");
+
 
 void UX_signal(int length) {
     HAL_GPIO_WritePin(TEST_SGN_GPIO_Port, TEST_SGN_Pin, GPIO_PIN_SET);
@@ -96,14 +102,14 @@ void logInfo(const char* message, int severity) {
     char buffer[128];
     sprintf(buffer, "LOG: %s\r\n", message);
     LEDon();
-    HAL_UART_Transmit(&huart2, (uint8_t*)buffer, strlen(buffer), HAL_MAX_DELAY);
+    HAL_UART_Transmit(&hlpuart1, (uint8_t*)buffer, strlen(buffer), HAL_MAX_DELAY);
     LEDoff();
-    UX_signal(10);
+    //UX_signal(10);
     for(int i=0; i<severity*2; i++) {
         flipLED(1);
     }
     LEDoff();
-    UX_signal(10);
+    //UX_signal(10);
 }
 
 /* USER CODE END 0 */
@@ -140,6 +146,8 @@ int main(void)
   MX_ADC1_Init();
   MX_USART2_UART_Init();
   MX_I2C1_Init();
+  MX_USART1_UART_Init();
+  MX_LPUART1_UART_Init();
   /* USER CODE BEGIN 2 */
 
   // Initialize button interrupt handling
@@ -158,14 +166,20 @@ int main(void)
     logInfo(errorInfo, 10);
   }
   int timePressed = 0;
-
+  char buf[100];
+  int len;
+  int i = 0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-    while (1) {
 
-    uint8_t data;
+    while (1) {
+    //long value = getMeasure(SENSOR_180);
+    //logInfo("Waiting for button press...", 1);
+    //HAL_Delay(100);
+
+      uint8_t data;
     // Check for button press event
     LEDoff();
     timePressed = 0;
@@ -176,9 +190,16 @@ int main(void)
     if (timePressed > 2) {
       LEDon();
           // Button press detected - perform action
-      uint8_t value = getMeasure();
+      long value = getMeasure(SENSOR_180);
       float_t turbidityValue = (float_t)value / 255.0f * 100.0f; // Example conversion to percentage
-      errorInfo = sendMeasure(0, value, turbidityValue);
+      //errorInfo = sendMeasure(value, value, turbidityValue);
+      sprintf(buf, "Sensor 180, Probe value = %d - AD = %d \r\n", -1, value);
+      logInfo(buf, 1);
+      
+      value = getMeasure(SENSOR_90);
+      sprintf(buf, "Sensor 90, Probe value = %d - AD = %d \r\n", -1, value);
+      logInfo(buf, 1);
+
       LEDoff();
       if (errorInfo != NULL) {
         logInfo(errorInfo, 3);
@@ -186,9 +207,9 @@ int main(void)
       buttonClearFlag();
     }
   }
-  /* USER CODE END WHILE */
+    /* USER CODE END WHILE */
 
-  /* USER CODE BEGIN 3 */
+    /* USER CODE BEGIN 3 */
   /* USER CODE END 3 */
 }
 

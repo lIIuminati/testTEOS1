@@ -20,7 +20,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "gpio.h"
-#include "stm32l4xx_hal_gpio.h"
 
 /* USER CODE BEGIN 0 */
 
@@ -51,7 +50,7 @@ void MX_GPIO_Init(void)
   /*Configure GPIO pin : USER_BTN_Pin */
   GPIO_InitStruct.Pin = USER_BTN_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(USER_BTN_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : TEST_SGN_Pin USER_LED_Pin */
@@ -61,9 +60,6 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  // 3. Enable the Interrupt in the NVIC (Nested Vectored Interrupt Controller)
-  // HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
-  // HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 }
 
 /* USER CODE BEGIN 2 */

@@ -38,10 +38,12 @@ extern "C" {
 /* USER CODE END Private defines */
 
 // Initialize the random number generator
-void initMeasure(void);
+#define SENSOR_180 0
+#define SENSOR_90 1
+void initMeasure();
 
 // Get a random measurement value (0-255) and output to UART2
-uint8_t getMeasure(void);
+long getMeasure(int sensor);
 
 /* USER CODE BEGIN Prototypes */
 
